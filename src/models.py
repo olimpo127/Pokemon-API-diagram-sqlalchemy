@@ -1,6 +1,6 @@
 import os
 import sys
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -29,13 +29,17 @@ Base = declarative_base()
 class Pokemon(Base):
     __tablename__ = "pokemon"
     id = Column(Integer, primary_key=True)
+    pokemon_id = Column(Integer)
     name = Column(String(50), nullable=False)
+    is_favorite = Column(Boolean)
     feature = relationship("Feature", back_populates="pokemon")
     stat = relationship("Stat", back_populates="pokemon")
+    favorite = relationship("Favorite")
 
 class Feature(Base):
     __tablename__ = "feature"
     id = Column(Integer, primary_key=True)
+    pokemon_id = Column(Integer)
     name = Column(String(50), nullable=False)
     type1 = Column(String(20), nullable=False)
     type2 = Column(String(20))
@@ -44,11 +48,12 @@ class Feature(Base):
     ability1 = Column(String(50), nullable=False)
     ability2 = Column(String(50))
     ability3 = Column(String(50))
-    parent_id = Column(Integer, ForeignKey("pokemon.id"))
+    parent_id = Column(Integer, ForeignKey("pokemon.pokemon_id"))
 
 class Stat(Base):
     __tablename__ = "stat"
     id = Column(Integer, primary_key=True)
+    pokemon_id = Column(Integer)
     name = Column(String(50), nullable=False) 
     hp = Column(Integer, nullable=False)
     attack = Column(Integer, nullable=False)
@@ -56,7 +61,14 @@ class Stat(Base):
     special_atk = Column(Integer, nullable=False)
     special_def = Column(Integer, nullable=False)
     speed = Column(Integer, nullable=False)
-    parent_id = Column(Integer, ForeignKey("pokemon.id"))
+    parent_id = Column(Integer, ForeignKey("pokemon.pokemon_id"))
+
+class Favorite(Base):
+    __tablename__ = "favorite"
+    id = Column(Integer, primary_key=True)
+    pokemon_id = Column(Integer)
+    name = Column(String(50), nullable=False) 
+    parent_id = Column(Integer, ForeignKey("pokemon.pokemon_id"))
 
 
 
